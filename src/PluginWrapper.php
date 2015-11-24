@@ -132,4 +132,31 @@ class PluginWrapper {
     }
     return $return;
   }
+
+  /**
+   * Retrieves relevant package from the event.
+   *
+   * In the case of update, the target package is retrieved, as that will
+   * provide the path the package will be installed to.
+   *
+   * @param \Composer\Installer\PackageEvent $event
+   * @return \Composer\Package\PackageInterface[]
+   * @throws \Exception
+   */
+  protected function getPackagesFromEvent(PackageEvent $event) {
+    $operation = $event->getOperation();
+    if ($operation instanceof InstallOperation) {
+      $packages = array($operation->getPackage());
+    }
+    elseif ($operation instanceof UpdateOperation) {
+      $packages = array(
+        $operation->getInitialPackage(),
+        $operation->getTargetPackage(),
+      );
+    }
+    elseif ($operation instanceof UninstallOperation) {
+      $packages = array($operation->getPackage());
+    }
+    return $packages;
+  }
 }
