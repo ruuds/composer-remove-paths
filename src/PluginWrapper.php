@@ -11,6 +11,10 @@ use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\Installer\PackageEvent;
 use Composer\Util\Filesystem;
+use Composer\DependencyResolver\Operation\InstallOperation;
+use Composer\DependencyResolver\Operation\UninstallOperation;
+use Composer\DependencyResolver\Operation\UpdateOperation;
+
 
 /**
  * Wrapper for making Plugin debuggable.
