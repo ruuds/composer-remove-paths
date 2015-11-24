@@ -1,6 +1,6 @@
 # Composer preserve paths
 
-Composer plugin for remove paths while installing or updating packages.
+Composer plugin to remove paths (files and/or directories) while installing or updating packages.
 
 ## Installation
 
@@ -14,7 +14,8 @@ For configuring the paths you need to set `remove-paths` within the `extra` of y
 {
     "extra": {
         "remove-paths": [
-          "htdocs/robots.txt"
+          "htdocs/robots.txt",
+          "htdocs/directory-to-remove"
         ]
       }
 }
