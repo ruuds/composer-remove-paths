@@ -78,9 +78,29 @@ class PathRemover {
       }
 
       foreach ($relevant_paths as $original) {
-        unlink($original);
+        if (is_dir($original)) {
+          // Remove directory
+          $this->removeDirectoryRecursively($original);
+        }
+        else {
+          // Remove file
+          unlink($original);
+        }
+
       }
     }
+  }
+
+  private function removeDirectoryRecursively($path) {
+    foreach (glob($path . '/*') as $file) {
+      if (is_dir($file)) {
+        $this->removeDirectoryRecursively($file);
+      }
+      else {
+        unlink($file);
+      }
+    }
+    rmdir($path);
   }
 
   /**
@@ -139,6 +159,4 @@ class PathRemover {
 
     return $return;
   }
-
-
 }
