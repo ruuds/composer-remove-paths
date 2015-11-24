@@ -33,11 +33,6 @@ class PluginWrapper {
   protected $filesystem;
 
   /**
-   * @var \ruuds\Composer\PathRemover[string]
-   */
-  protected $preservers;
-
-  /**
    * {@inheritdoc}
    */
   public function __construct(Composer $composer, IOInterface $io) {
@@ -53,11 +48,16 @@ class PluginWrapper {
    */
   public function postPackage(PackageEvent $event) {
     $packages = $this->getPackagesFromEvent($event);
-    $key = $this->getUniqueNameFromPackages($packages);
-    if ($this->preservers[$key]) {
-      $this->preservers[$key]->rollback();
-      unset($this->preservers[$key]);
-    }
+    $paths = $this->getInstallPathsFromPackages($packages);
+
+    $preserver = new PathRemover(
+      $paths,
+      $this->getPathsToRemove(),
+      $this->filesystem,
+      $this->io
+    );
+
+    $preserver->remove();
   }
 
   /**
