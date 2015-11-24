@@ -14,7 +14,7 @@ For configuring the paths you need to set `remove-paths` within the `extra` of y
 {
     "extra": {
         "remove-paths": [
-          "htdocs/robots.txt/all/modules/contrib"
+          "htdocs/robots.txt"
         ]
       }
 }
