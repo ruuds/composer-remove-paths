@@ -1,10 +1,12 @@
-# Composer preserve paths
+# Composer remove paths
 
-Composer plugin to remove paths (files and/or directories) while installing or updating packages.
+This Composer plugin allows you to remove paths (files and/or directories) while
+installing or updating packages, so you can remove unwanted files from your
+project, eg. before deploying to production.
 
 ## Installation
 
-Simply install the plugin with composer: `composer require ruuds/composer-preserve-paths`
+Simply install the plugin with composer: `composer require ruuds/composer-remove-paths`
 
 ## Configuration
 

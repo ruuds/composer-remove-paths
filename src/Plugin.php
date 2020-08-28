@@ -9,13 +9,15 @@ namespace ruuds\Composer;
 
 use Composer\Composer;
 use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Installer\PackageEvent;
-use Composer\Script\ScriptEvents;
 
 /**
- * Class Plugin.
+ * Class Plugin
+ *
+ * @package ruuds\Composer
  */
 class Plugin implements PluginInterface, EventSubscriberInterface {
 
@@ -36,25 +38,18 @@ class Plugin implements PluginInterface, EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return array(
-      ScriptEvents::POST_PACKAGE_INSTALL => 'postPackage',
-      ScriptEvents::POST_PACKAGE_UPDATE => 'postPackage',
-      ScriptEvents::POST_PACKAGE_UNINSTALL => 'postPackage'
+      PackageEvents::POST_PACKAGE_INSTALL => 'postPackage',
+      PackageEvents::POST_PACKAGE_UPDATE => 'postPackage',
+      PackageEvents::POST_PACKAGE_UNINSTALL => 'postPackage',
     );
   }
 
   /**
-   * Pre Package event behaviour for backing up preserved paths.
+   * Pre Package event behaviour for backing up removed paths.
    *
    * @param \Composer\Installer\PackageEvent $event
-   */
-  public function prePackage(PackageEvent $event) {
-    $this->wrapper->prePackage($event);
-  }
-
-  /**
-   * Pre Package event behaviour for backing up preserved paths.
    *
-   * @param \Composer\Installer\PackageEvent $event
+   * @throws \Exception
    */
   public function postPackage(PackageEvent $event) {
     $this->wrapper->postPackage($event);

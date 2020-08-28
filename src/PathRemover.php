@@ -6,8 +6,13 @@
 
 namespace ruuds\Composer;
 
+use Composer\Util\FileSystem;
+use \Composer\IO\IOInterface;
+
 /**
  * Class PathRemover
+ *
+ * @package ruuds\Composer
  */
 class PathRemover {
 
@@ -53,7 +58,7 @@ class PathRemover {
    * @param \Composer\IO\IOInterface $io
    *   IO interface for writing messages.
    */
-  public function __construct($installPaths, $removePaths, \Composer\Util\FileSystem $filesystem, \Composer\IO\IOInterface $io) {
+  public function __construct($installPaths, $removePaths, FileSystem $filesystem, IOInterface $io) {
     $this->installPaths = array_unique($installPaths);
     $this->removePaths = array_unique($removePaths);
     $this->filesystem = $filesystem;

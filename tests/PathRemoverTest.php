@@ -2,33 +2,33 @@
 
 namespace ruuds\Composer\Tests;
 
-use ruuds\Composer\PathRemover;
+use Composer\IO\IOInterface;
 use Composer\Util\Filesystem;
-use Composer\Config;
-use Symfony\Component\Yaml\Exception\RuntimeException;
+use PHPUnit\Framework\TestCase;
+use ruuds\Composer\PathRemover;
+use \RuntimeException;
 
-class PathRemoverTest extends \PHPUnit_Framework_TestCase {
+/**
+ * Class PathRemoverTest
+ *
+ * @package ruuds\Composer\Tests
+ */
+class PathRemoverTest extends TestCase {
+
+  /**
+   * @var \Composer\Util\Filesystem
+   */
+  protected $fs;
+
+  /**
+   * @var \Composer\IO\IOInterface|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected $io;
 
   /**
    * @var string
    */
-  private $workDirectory;
-
-  public function __construct($name = NULL, array $data = array(), $dataName = '') {
-
-    $this->workDirectory = __DIR__ . '/workdir_' . uniqid();
-    mkdir($this->workDirectory);
-
-    if (!is_dir($this->workDirectory)) {
-      throw new RuntimeException("Failed creating workDirectory");
-    }
-
-    parent::__construct($name, $data, $dataName);
-  }
-
-  public function __destruct() {
-    $this->removeDirectory($this->workDirectory);
-  }
+  protected $workDirectory;
 
   private function removeDirectory($path) {
     foreach (glob($path . '/*') as $file) {
@@ -43,16 +43,36 @@ class PathRemoverTest extends \PHPUnit_Framework_TestCase {
     rmdir($path);
   }
 
-
   /**
-   * set up test environmemt
+   * {@inheritDoc}
    */
-  public function setUp() {
+  public function setUp(): void {
+    parent::setUp();
+
     $this->fs = new Filesystem();
-    $this->io = $this->getMock('Composer\IO\IOInterface');
+    $this->io = $this->createMock(IOInterface::class);
+
+    $this->workDirectory = __DIR__ . '/workdir_' . uniqid();
+    mkdir($this->workDirectory);
+
+    if (!is_dir($this->workDirectory)) {
+      throw new RuntimeException("Failed creating workDirectory");
+    }
   }
 
-  public function testRemove() {
+  /**
+   * {@inheritDoc}
+   */
+  protected function tearDown(): void {
+    $this->removeDirectory($this->workDirectory);
+
+    parent::tearDown();
+  }
+
+  /**
+   * TestRemove.
+   */
+  public function testRemove(): void {
     // Create testfiles
     $file1 = $this->workDirectory . '/file1.txt';
     file_put_contents($file1, 'Contents of file1');
@@ -80,14 +100,14 @@ class PathRemoverTest extends \PHPUnit_Framework_TestCase {
     mkdir($dir3);
 
     $installPaths = array(
-      $this->workDirectory
+      $this->workDirectory,
     );
 
     $removePaths = array(
       $file1,
       $file2,
       $file2,
-      $dir1
+      $dir1,
     );
 
     $remover = new PathRemover($installPaths, $removePaths, $this->fs, $this->io);
@@ -102,13 +122,13 @@ class PathRemoverTest extends \PHPUnit_Framework_TestCase {
 
     $remover->remove();
 
-    $this->assertFileNotExists($file1, 'File1 removed');
-    $this->assertFileNotExists($file2, 'File2 removed');
+    $this->assertFileDoesNotExist($file1, 'File1 removed');
+    $this->assertFileDoesNotExist($file2, 'File2 removed');
     $this->assertFileExists($file3, 'File3 still exists');
-    $this->assertFileNotExists($file4, 'File4 removed');
-    $this->assertFileNotExists($file5, 'File5 removed');
-    $this->assertFileNotExists($dir1, 'Dir1 removed');
-    $this->assertFileNotExists($dir2, 'Dir2 removed');
+    $this->assertFileDoesNotExist($file4, 'File4 removed');
+    $this->assertFileDoesNotExist($file5, 'File5 removed');
+    $this->assertFileDoesNotExist($dir1, 'Dir1 removed');
+    $this->assertFileDoesNotExist($dir2, 'Dir2 removed');
     $this->assertFileExists($dir3, 'Dir3 still exists');
   }
 }

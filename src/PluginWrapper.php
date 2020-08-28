@@ -15,9 +15,10 @@ use Composer\DependencyResolver\Operation\InstallOperation;
 use Composer\DependencyResolver\Operation\UninstallOperation;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 
-
 /**
- * Wrapper for making Plugin debuggable.
+ * Class PluginWrapper
+ *
+ * @package ruuds\Composer
  */
 class PluginWrapper {
 
@@ -37,7 +38,11 @@ class PluginWrapper {
   protected $filesystem;
 
   /**
-   * {@inheritdoc}
+   * PluginWrapper constructor.
+   *
+   * @param \Composer\Composer $composer
+   *
+   * @param \Composer\IO\IOInterface $io
    */
   public function __construct(Composer $composer, IOInterface $io) {
     $this->io = $io;
@@ -46,22 +51,24 @@ class PluginWrapper {
   }
 
   /**
-   * Pre Package event behaviour for backing up preserved paths.
+   * Pre Package event behaviour for backing up removed paths.
    *
    * @param \Composer\Installer\PackageEvent $event
+   *
+   * @throws \Exception
    */
   public function postPackage(PackageEvent $event) {
     $packages = $this->getPackagesFromEvent($event);
     $paths = $this->getInstallPathsFromPackages($packages);
 
-    $preserver = new PathRemover(
+    $remover = new PathRemover(
       $paths,
       $this->getPathsToRemove(),
       $this->filesystem,
       $this->io
     );
 
-    $preserver->remove();
+    $remover->remove();
   }
 
   /**
@@ -72,7 +79,6 @@ class PluginWrapper {
    * @return string[]
    */
   protected function getInstallPathsFromPackages(array $packages) {
-    /** @var \Composer\Installer\InstallationManager $installationManager */
     $installationManager = $this->composer->getInstallationManager();
 
     $paths = array();
@@ -99,7 +105,7 @@ class PluginWrapper {
   }
 
   /**
-   * Get preserve paths from root configuration.
+   * Get remove-paths from root configuration.
    *
    * @return string[]
    */
@@ -123,6 +129,7 @@ class PluginWrapper {
    * Helper to convert relative paths to absolute ones.
    *
    * @param string[] $paths
+   *
    * @return string[]
    */
   protected function absolutePaths($paths) {
@@ -144,10 +151,12 @@ class PluginWrapper {
    * provide the path the package will be installed to.
    *
    * @param \Composer\Installer\PackageEvent $event
+   *
    * @return \Composer\Package\PackageInterface[]
    * @throws \Exception
    */
   protected function getPackagesFromEvent(PackageEvent $event) {
+    $packages = [];
     $operation = $event->getOperation();
     if ($operation instanceof InstallOperation) {
       $packages = array($operation->getPackage());

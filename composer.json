@@ -1,6 +1,6 @@
 {
   "name": "ruuds/composer-remove-paths",
-  "description": "Composer plugin for removing files after install or update",
+  "description": "Composer plugin for removing files after install or update.",
   "type": "composer-plugin",
   "keywords": [
     "composer-plugin",
@@ -11,20 +11,21 @@
   "authors": [
     {
       "name": "Ruud Simons",
-      "email": "ruud@groowup.nl",
-      "homepage": "http://www.groowup.nl"
+      "email": "post@ruudsimons.nl",
+      "homepage": "https://www.ruudsimons.nl"
     }
   ],
   "require": {
-    "composer-plugin-api": "^1.0"
+    "composer-plugin-api": "^1.0",
+    "phpunit/phpunit": "^9.3"
   },
   "require-dev": {
-    "composer/composer": "1.0.*@dev",
-    "phpunit/phpunit": "4.4.*"
+    "composer/composer": "1.0.*@dev"
   },
   "autoload": {
     "psr-4": {
-      "ruuds\\Composer\\": "src/"
+      "ruuds\\Composer\\": "src/",
+      "ruuds\\Composer\\Tests\\": "tests/"
     }
   },
   "extra": {
